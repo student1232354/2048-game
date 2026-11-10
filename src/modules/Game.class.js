@@ -1,8 +1,3 @@
-'use strict';
-
-/**
- * This class represents the game.
- */
 class Game {
   constructor(initialState) {
     this.board = initialState || [
@@ -43,10 +38,10 @@ class Game {
     }
 
     if (moved) {
-      this.AddloopclearRandomAdd();
+      this.addRandomTile();
     }
-    this.Victory();
-    this.Gameover();
+    this.checkWin();
+    this.checkLose();
   }
 
   moveRight() {
@@ -76,10 +71,10 @@ class Game {
     }
 
     if (moved) {
-      this.AddloopclearRandomAdd();
+      this.addRandomTile();
     }
-    this.Victory();
-    this.Gameover();
+    this.checkWin();
+    this.checkLose();
   }
 
   moveUp() {
@@ -117,10 +112,10 @@ class Game {
     }
 
     if (moved) {
-      this.AddloopclearRandomAdd();
+      this.addRandomTile();
     }
-    this.Victory();
-    this.Gameover();
+    this.checkWin();
+    this.checkLose();
   }
 
   moveDown() {
@@ -159,10 +154,10 @@ class Game {
     }
 
     if (moved) {
-      this.AddloopclearRandomAdd();
+      this.addRandomTile();
     }
-    this.Victory();
-    this.Gameover();
+    this.checkWin();
+    this.checkLose();
   }
 
   getScore() {
@@ -184,8 +179,8 @@ class Game {
   start() {
     if (this.status === 'idle' || this.status === 'lose') {
       this.status = 'playing';
-      this.AddloopclearRandomAdd();
-      this.AddloopclearRandomAdd();
+      this.addRandomTile();
+      this.addRandomTile();
       this.getScore();
     }
   }
@@ -198,18 +193,20 @@ class Game {
         this.board[y][x] = 0;
       }
     }
-    this.AddloopclearRandomAdd();
-    this.AddloopclearRandomAdd();
+    this.addRandomTile();
+    this.addRandomTile();
     this.getScore();
   }
 
-  AddloopclearRandomAdd() {
+  addRandomTile() {
     const emptyCells = [];
 
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; x++) {
         if (this.board[y][x] === 0) {
-          emptyCells.push({ y, x });
+          emptyCells.push({
+            y, x,
+          });
         }
       }
     }
@@ -224,7 +221,7 @@ class Game {
     }
   }
 
-  Victory() {
+  checkWin() {
     for (let y = 0; y < 4; y++) {
       for (let x = 0; x < 4; x++) {
         const current = this.board[y][x];
@@ -236,7 +233,7 @@ class Game {
     }
   }
 
-  Gameover() {
+  checkLose() {
     let zeros = 0;
 
     for (let y = 0; y < 4; y++) {
@@ -267,5 +264,3 @@ class Game {
 }
 
 export default Game;
-
-// module.exports = Game;

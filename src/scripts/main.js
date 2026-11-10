@@ -1,10 +1,8 @@
-'use strict';
-// Uncomment the next lines to use your game instance in the browser
+
 import Game from '../modules/Game.class.js';
 
-// const Game = require('../modules/Game.class.js');
 const game = new Game();
-const start1 = document.querySelector('.button');
+const startButton = document.querySelector('.button');
 
 function updateUI() {
   const currentStatus = game.getStatus();
@@ -19,24 +17,24 @@ function updateUI() {
   }
 
   if (currentStatus === 'idle') {
-    start1.classList.remove('restart');
-    start1.classList.add('start');
-    start1.textContent = 'Start';
+    startButton.classList.remove('restart');
+    startButton.classList.add('start');
+    startButton.textContent = 'Start';
   } else {
-    start1.classList.remove('start');
-    start1.classList.add('restart');
-    start1.textContent = 'Restart';
+    startButton.classList.remove('start');
+    startButton.classList.add('restart');
+    startButton.textContent = 'Restart';
   }
 
   if (currentStatus === 'lose') {
     if (loseMessage) {
       loseMessage.classList.remove('hidden');
     }
-    likeloop();
-    score();
+    render();
+    Score();
   } else if (currentStatus === 'win') {
     winmessage.classList.remove('hidden');
-    likeloop();
+    render();
   } else {
     if (loseMessage) {
       loseMessage.classList.add('hidden');
@@ -44,30 +42,10 @@ function updateUI() {
   }
 }
 
-start1.addEventListener('click', () => {
-  updateUI();
-
-  if (
-    game.status === 'lose' ||
-    game.status === 'win' ||
-    game.status === 'idle' ||
-    game.status === 'playing'
-  ) {
-    game.score = 0;
-    game.restart();
-    likeloop();
-  }
-
-  if (game.status !== 'playing') {
-    game.start();
-    score();
-    likeloop();
-  } else if (game.status === 'lose' || game.status === 'win') {
-    game.restart();
-    likeloop();
-  }
-  likeloop();
-  score();
+startButton.addEventListener('click', () => {
+  game.restart();
+  render();
+  Score();
   updateUI();
 });
 
@@ -78,73 +56,40 @@ window.addEventListener('keydown', (e) => {
     return;
   }
 
-  if (e.key === 'ArrowLeft') {
-    game.moveLeft();
-    likeloop();
-    score();
-    highscore();
-    game.Gameover();
-    game.getStatus();
+  switch (e.key) {
+    case 'ArrowLeft':
+      e.preventDefault();
+      game.moveLeft();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      game.moveRight();
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      game.moveDown();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      game.moveUp();
+      break;
+    default:
+      return;
   }
+
+  render();
+  Score();
+  highscore();
+  game.checkLose();
+  game.getStatus();
 });
 
-window.addEventListener('keydown', (e) => {
-  updateUI();
-
-  if (game.status !== 'playing') {
-    return;
-  }
-
-  if (e.key === 'ArrowRight') {
-    game.moveRight();
-    likeloop();
-    score();
-    highscore();
-    game.Gameover();
-    game.getStatus();
-  }
-});
-
-window.addEventListener('keydown', (e) => {
-  updateUI();
-
-  if (game.status !== 'playing') {
-    return;
-  }
-
-  if (e.key === 'ArrowDown') {
-    game.moveDown();
-    likeloop();
-    score();
-    highscore();
-    game.Gameover();
-    game.getStatus();
-  }
-});
-
-window.addEventListener('keydown', (e) => {
-  updateUI();
-
-  if (game.status !== 'playing') {
-    return;
-  }
-
-  if (e.key === 'ArrowUp') {
-    game.moveUp();
-    likeloop();
-    score();
-    highscore();
-    game.Gameover();
-    game.getStatus();
-  }
-});
-
-function score() {
-  const scorething = game.getScore();
+function Score() {
+  const currentScore = game.getScore();
   const scoreElement = document.querySelector('.game-score');
 
   if (scoreElement) {
-    scoreElement.textContent = scorething;
+    scoreElement.textContent = currentScore;
   }
 }
 
@@ -156,7 +101,7 @@ function highscore() {
   }
 }
 
-function likeloop() {
+function render() {
   const board = game.getState();
   const cells = document.querySelectorAll('.field-cell');
 
